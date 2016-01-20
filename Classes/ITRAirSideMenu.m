@@ -230,7 +230,7 @@
     [self setAnchorPoint:CGPointMake(1.0, 0.5) forView:_contentViewContainer];
     [self setAnchorPoint:CGPointMake(1.0, 0.5) forView:_contentViewController.view];
     
-    [UIView animateWithDuration:self.animationDuration animations:^{
+    [UIView animateWithDuration:self.animationDuration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
         
         //content view scale transform
         CATransform3D contentScaleTransform =  _contentViewContainer.layer.transform;
@@ -356,7 +356,7 @@
     
     if (animated) {
         [[UIApplication sharedApplication] beginIgnoringInteractionEvents];
-        [UIView animateWithDuration:self.animationDuration animations:^{
+        [UIView animateWithDuration:self.animationDuration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
             animationBlock();
         } completion:^(BOOL finished) {
             [[UIApplication sharedApplication] endIgnoringInteractionEvents];
@@ -478,53 +478,50 @@
             CGFloat contentViewScale = 1 + (_contentViewScaleValue - 1)* (newLocationPoint.x / 300);
             CGFloat angle = (newLocationPoint.x - _lastPoint.x) * _contentViewRotatingAngle/300;
             CGFloat tranformX = newLocationPoint.x * _contentViewTranslateX/300;
-            
-            [UIView animateWithDuration:self.animationDuration animations:^{
-                
-                _totalAngle = _totalAngle + angle;
-                
-                //content view scale transform
-                CATransform3D contentScaleTransform =  _contentViewContainer.layer.transform;
-                contentScaleTransform = CATransform3DMakeScale(contentViewScale, contentViewScale,1.0f);
-                _contentViewContainer.layer.transform = contentScaleTransform;
 
-                if (angle != 0) {
-                    //content view rotate transform
-                    CATransform3D contentRotateTransform =  _contentViewController.view.layer.transform;
-                    contentRotateTransform = CATransform3DMakeRotation(_totalAngle * M_PI/180.0f, 0.0f, -1.0f, 0.0f);
-                    CATransform3D sublayerTransform = _contentViewController.view.superview.layer.sublayerTransform;
-                    sublayerTransform.m34 = 1.0f / -300.0f;
-                    _contentViewController.view.superview.layer.sublayerTransform = sublayerTransform;
-                    _contentViewController.view.layer.transform = contentRotateTransform;
-                }
+            _totalAngle = _totalAngle + angle;
 
-                //content view translate transform
-                CATransform3D contentTranslateTransform = _contentViewContainer.layer.transform;
-                contentTranslateTransform = CATransform3DTranslate(contentTranslateTransform, tranformX, 0, 0);
-                _contentViewContainer.layer.transform = contentTranslateTransform;
-                
-                
-                //calculation of scale, angle & translate for menu view based on pan position
-                if (angle != 0) {
-                    CGFloat menuAngle = _menuViewRotatingAngle - (newLocationPoint.x) * _menuViewRotatingAngle/300;
+            //content view scale transform
+            CATransform3D contentScaleTransform =  _contentViewContainer.layer.transform;
+            contentScaleTransform = CATransform3DMakeScale(contentViewScale, contentViewScale,1.0f);
+            _contentViewContainer.layer.transform = contentScaleTransform;
 
-                    //menu view rotate transform
-                    CATransform3D menuRotateTransform =  _leftMenuViewController.view.layer.transform;
-                    menuRotateTransform = CATransform3DMakeRotation(menuAngle * M_PI/180.0f, 0.0f, -1.0f, 0.0f);
-                    CATransform3D sublayerTransform1 = _leftMenuViewController.view.superview.layer.sublayerTransform;
-                    sublayerTransform1.m34 = 1.0f / -300.0f;
-                    _leftMenuViewController.view.superview.layer.sublayerTransform = sublayerTransform1;
-                    _leftMenuViewController.view.layer.transform = menuRotateTransform;
-                }
+            if (angle != 0) {
+                //content view rotate transform
+                CATransform3D contentRotateTransform =  _contentViewController.view.layer.transform;
+                contentRotateTransform = CATransform3DMakeRotation(_totalAngle * M_PI/180.0f, 0.0f, -1.0f, 0.0f);
+                CATransform3D sublayerTransform = _contentViewController.view.superview.layer.sublayerTransform;
+                sublayerTransform.m34 = 1.0f / -300.0f;
+                _contentViewController.view.superview.layer.sublayerTransform = sublayerTransform;
+                _contentViewController.view.layer.transform = contentRotateTransform;
+            }
 
-                CGFloat menuTransformValue = (_menuViewTranslateX * newLocationPoint.x/300) - _menuViewTranslateX - _menuViewContainer.frame.origin.x;
+            //content view translate transform
+            CATransform3D contentTranslateTransform = _contentViewContainer.layer.transform;
+            contentTranslateTransform = CATransform3DTranslate(contentTranslateTransform, tranformX, 0, 0);
+            _contentViewContainer.layer.transform = contentTranslateTransform;
 
-                //menu view translate transform
-                CATransform3D menuTranslateTransform = _menuViewContainer.layer.transform;
-                menuTranslateTransform = CATransform3DTranslate(menuTranslateTransform, menuTransformValue, 0, 0);
-                _menuViewContainer.layer.transform = menuTranslateTransform;
-                
-            } completion:nil];
+
+            //calculation of scale, angle & translate for menu view based on pan position
+            if (angle != 0) {
+                CGFloat menuAngle = _menuViewRotatingAngle - (newLocationPoint.x) * _menuViewRotatingAngle/300;
+
+                //menu view rotate transform
+                CATransform3D menuRotateTransform =  _leftMenuViewController.view.layer.transform;
+                menuRotateTransform = CATransform3DMakeRotation(menuAngle * M_PI/180.0f, 0.0f, -1.0f, 0.0f);
+                CATransform3D sublayerTransform1 = _leftMenuViewController.view.superview.layer.sublayerTransform;
+                sublayerTransform1.m34 = 1.0f / -300.0f;
+                _leftMenuViewController.view.superview.layer.sublayerTransform = sublayerTransform1;
+                _leftMenuViewController.view.layer.transform = menuRotateTransform;
+            }
+
+            CGFloat menuTransformValue = (_menuViewTranslateX * newLocationPoint.x/300) - _menuViewTranslateX - _menuViewContainer.frame.origin.x;
+
+            //menu view translate transform
+            CATransform3D menuTranslateTransform = _menuViewContainer.layer.transform;
+            menuTranslateTransform = CATransform3DTranslate(menuTranslateTransform, menuTransformValue, 0, 0);
+            _menuViewContainer.layer.transform = menuTranslateTransform;
+
             _lastPoint.x = newLocationPoint.x;
         }
         
@@ -557,11 +554,13 @@
                 if (self.contentViewContainer.frame.origin.x < 0) {
                     [self hideMenuViewController];
                 } else {
-                    if (self.leftMenuViewController) {
+                    if (self.isLeftMenuVisible && (300 - _lastPoint.x) > self.panMinimumOpenThreshold) {
+                        [self hideMenuViewController];
+                    }
+                    else if (self.leftMenuViewController) {
                         [self showLeftMenuViewController];
                     }
                 }
-            
         }
     }
     
