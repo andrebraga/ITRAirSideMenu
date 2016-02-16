@@ -482,8 +482,10 @@
     if (recognizer.state == UIGestureRecognizerStateChanged) {
 
         CGPoint newLocationPoint = point;
-        if(newLocationPoint.x < 0)
-            newLocationPoint.x = self.actionThreshold + newLocationPoint.x;
+        
+        if (self.isLeftMenuVisible && (newLocationPoint.x < 0 || _lastPoint.x > newLocationPoint.x)) {
+            newLocationPoint.x = newLocationPoint.x + 300;
+        }
 
         //track movement
         if((newLocationPoint.x >= 0 && newLocationPoint.x <= self.actionThreshold))
