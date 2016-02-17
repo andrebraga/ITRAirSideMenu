@@ -494,7 +494,8 @@
         CGPoint newLocationPoint = point;
         
         if (self.isLeftMenuVisible && (newLocationPoint.x < 0 || _lastPoint.x > newLocationPoint.x)) {
-            newLocationPoint.x = newLocationPoint.x + 300;
+            CGFloat screenWidth = CGRectGetWidth([[UIScreen mainScreen] bounds]);
+            newLocationPoint.x = newLocationPoint.x + screenWidth - 25;
         }
 
         //track movement
