@@ -571,6 +571,14 @@
 
         self.didNotifyDelegate = NO;
 
+        CGFloat velocityInX = [recognizer velocityInView:self.view].x;
+        
+        if (velocityInX > 0) {
+            [self showLeftMenuViewController];
+        }
+        else if (velocityInX < 0) {
+            [self hideMenuViewController];
+        }
         // if minimum open threshold not satisfied, left menu is closed again
         if (self.panMinimumOpenThreshold > 0 && (self.contentViewContainer.frame.origin.x > 0 && self.contentViewContainer.frame.origin.x < self.panMinimumOpenThreshold))
         {
