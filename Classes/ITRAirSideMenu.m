@@ -158,7 +158,7 @@
     });
     self.contentButton = ({
         UIButton *button = [[UIButton alloc] initWithFrame:CGRectNull];
-        [button addTarget:self action:@selector(contentButtonTapped:forEvent:) forControlEvents:UIControlEventTouchUpInside];
+        [button addTarget:self action:@selector(hideMenuViewController) forControlEvents:UIControlEventTouchUpInside];
         button;
     });
 
@@ -202,16 +202,6 @@
 
 #pragma mark -
 #pragma mark Private methods
-
-- (void)contentButtonTapped:(id)sender forEvent:(UIEvent *)event
-{
-    NSSet *touches = [event touchesForView:sender];
-    UITouch *touch = [touches anyObject];
-    CGPoint touchPoint = [touch locationInView:sender];
-    if (touchPoint.y <= 64.0) {
-        [self hideMenuViewController];
-    }
-}
 
 - (void)presentMenuViewContainerWithMenuViewController:(UIViewController *)menuViewController
 {
